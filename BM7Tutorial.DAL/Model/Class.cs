@@ -1,17 +1,12 @@
 ﻿using Microsoft.Azure.Documents;
 using Newtonsoft.Json;
+using Nexus.Base.CosmosDBRepository;
 using System;
 
 namespace BM7Tutorial.DAL
 {
-    public class Class
+    public class Class : ModelBase
     {
-        [JsonProperty("id")]
-        public string Id { get; set; }
-
-        [JsonProperty("partitionKey")]
-        public string PartitionKey { get; set; }
-
         [JsonProperty("classCode")]
         public string ClassCode { get; set; }
 

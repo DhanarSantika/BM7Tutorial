@@ -7,6 +7,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.13.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Nexus.Base.CosmosDBRepository" Version="2020.11.9.1" />
+    <PackageReference Include="Nexus.Base.Identity" Version="2021.2.5.1" />
   </ItemGroup>
 
 </Project>

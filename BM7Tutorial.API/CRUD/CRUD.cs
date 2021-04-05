@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using BM7Tutorial.API.CRUD.DTO;
@@ -11,6 +12,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using static BM7Tutorial.DAL.Repositories;
 
 namespace BM7Tutorial.API.CRUD
 {
@@ -65,6 +67,31 @@ namespace BM7Tutorial.API.CRUD
             }
         }
 
+        [FunctionName("CRUD_GetClassByIdNexus")]
+        public static async Task<IActionResult> GetAllByIdNexus(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Nexus/Class/{classId}")] HttpRequest req,
+            [CosmosDB(ConnectionStringSetting = "cosmos-bl-tutorial-serverless")] DocumentClient documentClient,
+            string classId,
+            ILogger log)
+        {
+            log.LogInformation("Triggering CRUD_GetClassByIdNexus by HTTP Trigger");
+
+            try
+            {
+                var repsClass = new ClassRepository(documentClient);
+                var pk = new Dictionary<string, string> { { "ClassCode", "test-class-1" } };
+                var data = await repsClass.GetByIdAsync(classId, partitionKeys: pk);
+
+                return new OkObjectResult(data);
+            }
+            catch (Exception e)
+            {
+                log.LogError($"Error : {e.Message}");
+
+                return new BadRequestObjectResult($"Error : {e.Message}");
+            }
+        }
+
         [FunctionName("CRUD_CreateClass")]
         public static async Task<IActionResult> CreateClass(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Class")] HttpRequest req,
@@ -77,19 +104,16 @@ namespace BM7Tutorial.API.CRUD
             {
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 var data = JsonConvert.DeserializeObject<ClassDTO>(requestBody);
-                var pk = new PartitionKey("/partitionKey");
-                var options = new RequestOptions() { PartitionKey = pk };
 
+                var repsClass = new ClassRepository(documentClient);
                 var classObj = new Class
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    PartitionKey = "Class/",
                     ClassCode = data.ClassCode,
                     Description = data.Description
                 };
 
-                await documentClient.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri("Course", "Class"), classObj);
-
+                await repsClass.CreateAsync(classObj);
+                
                 return new OkObjectResult(classObj);
             }
             catch (Exception e)
