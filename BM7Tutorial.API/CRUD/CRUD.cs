@@ -65,11 +65,10 @@ namespace BM7Tutorial.API.CRUD
             }
         }
 
-        /*
         [FunctionName("CRUD_CreateClass")]
         public static async Task<IActionResult> CreateClass(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Class")] HttpRequest req,
-            [CosmosDB(ConnectionStringSetting = "cosmos-bl-tutorial")] DocumentClient documentClient,
+            [CosmosDB(ConnectionStringSetting = "cosmos-bl-tutorial-serverless")] DocumentClient documentClient,
             ILogger log)
         {
             log.LogInformation("Triggering CRUD_GetClassById by HTTP Trigger");
@@ -78,16 +77,20 @@ namespace BM7Tutorial.API.CRUD
             {
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 var data = JsonConvert.DeserializeObject<ClassDTO>(requestBody);
+                var pk = new PartitionKey("/partitionKey");
+                var options = new RequestOptions() { PartitionKey = pk };
 
                 var classObj = new Class
                 {
                     Id = Guid.NewGuid().ToString(),
-                    PartitionKey = new PartitionKey("Class"),
+                    PartitionKey = "Class/",
                     ClassCode = data.ClassCode,
                     Description = data.Description
                 };
 
-                return new OkObjectResult(data);
+                await documentClient.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri("Course", "Class"), classObj);
+
+                return new OkObjectResult(classObj);
             }
             catch (Exception e)
             {
@@ -96,7 +99,6 @@ namespace BM7Tutorial.API.CRUD
                 return new BadRequestObjectResult($"Error : {e.Message}");
             }
         }
-        */
     }
 }
 

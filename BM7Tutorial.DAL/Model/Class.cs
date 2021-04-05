@@ -9,6 +9,9 @@ namespace BM7Tutorial.DAL
         [JsonProperty("id")]
         public string Id { get; set; }
 
+        [JsonProperty("partitionKey")]
+        public string PartitionKey { get; set; }
+
         [JsonProperty("classCode")]
         public string ClassCode { get; set; }
 
