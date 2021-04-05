@@ -12,6 +12,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Nexus.Base.CosmosDBRepository;
 using static BM7Tutorial.DAL.Repositories;
 
 namespace BM7Tutorial.API.CRUD
@@ -112,7 +113,9 @@ namespace BM7Tutorial.API.CRUD
                     Description = data.Description
                 };
 
-                await repsClass.CreateAsync(classObj);
+                var options = new EventGridOptions { PublishEvent = false };
+
+                await repsClass.CreateAsync(classObj, options);
                 
                 return new OkObjectResult(classObj);
             }
