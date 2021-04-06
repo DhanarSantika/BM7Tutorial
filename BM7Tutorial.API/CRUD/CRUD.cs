@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using BM7Tutorial.API.CRUD.DTO;
+using BM7Tutorial.BLL.CRUD;
 using BM7Tutorial.DAL;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -116,7 +118,7 @@ namespace BM7Tutorial.API.CRUD
                 var options = new EventGridOptions { PublishEvent = false };
 
                 await repsClass.CreateAsync(classObj, options);
-                
+
                 return new OkObjectResult(classObj);
             }
             catch (Exception e)
@@ -124,6 +126,37 @@ namespace BM7Tutorial.API.CRUD
                 log.LogError($"Error : {e.Message}");
 
                 return new BadRequestObjectResult($"Error : {e.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Implementasi Get Class By Id yang melalui tahap unit testing
+        /// </summary>
+        /// <param name="req"></param>
+        /// <param name="documentClient"></param>
+        /// <param name="classId"></param>
+        /// <param name="log"></param>
+        /// <returns></returns>
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(Class))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(string))]
+        [FunctionName("CRUD_GetClassByIdUT")]
+        public static async Task<IActionResult> GetClassByIdUT(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "UT/Class/{classId}")] HttpRequest req,
+            [CosmosDB(ConnectionStringSetting = "cosmos-bl-tutorial-serverless")] DocumentClient documentClient,
+            string classId,
+            ILogger log)
+        {
+            try
+            {
+                var crudService = new CRUDService(new ClassRepository(documentClient));
+
+                Dictionary<string, string> pk = null; // new Dictionary<string, string> { { "ClassCode", "test-class-code" } };
+                var classById = await crudService.GetClassById(classId, pk);
+
+                return new OkObjectResult(classById);
+            } catch (Exception e)
+            {
+                return new BadRequestObjectResult(e.Message);
             }
         }
     }

@@ -4,6 +4,7 @@
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="AzureExtensions.Swashbuckle" Version="3.3.2" />
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.13.1" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.CosmosDB" Version="3.0.10" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventHubs" Version="4.1.1" />
@@ -11,6 +12,7 @@
     <PackageReference Include="Nexus.Base.EventHubExtensions" Version="2020.3.13.2" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BM7Tutorial.BLL\BM7Tutorial.BLL.csproj" />
     <ProjectReference Include="..\BM7Tutorial.DAL\BM7Tutorial.DAL.csproj" />
   </ItemGroup>
   <ItemGroup>

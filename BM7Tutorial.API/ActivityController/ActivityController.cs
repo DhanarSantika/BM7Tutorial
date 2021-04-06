@@ -18,7 +18,7 @@ namespace BM7Tutorial.API.ActivityController
 {
     public class ActivityController
     {
-        [FunctionName("ActivityController")]
+        /*[FunctionName("ActivityController")]
         public async Task Run(
             [EventHubTrigger("class.activity", Connection = "evh-bl-tutorial-dhanar")] EventData[] events,
             [CosmosDB(ConnectionStringSetting = "cosmos-bl-tutorial-serverless")] DocumentClient documentClient,
@@ -83,6 +83,6 @@ namespace BM7Tutorial.API.ActivityController
 
             if (exceptions.Count == 1)
                 throw exceptions.Single();
-        }
+        }*/
     }
 }
